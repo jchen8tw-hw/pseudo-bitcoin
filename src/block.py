@@ -4,10 +4,9 @@ from pow import Pow
 
 
 class Block(object):
-    def __init__(self, data='genesis', prev_block_hash='', height=1, bits=24):
+    def __init__(self,transaction_list, prev_block_hash='', height=1, bits=24):
         self._timestamp = encode(str(int(time.time())))
         self._height = height
-        self._data = encode(data)
         self._prev_block_hash = encode(prev_block_hash)
         self._bits = bits
         self._nonce = None
@@ -39,9 +38,6 @@ class Block(object):
     def bits(self):
         return self._bits
 
-    @property
-    def data(self):
-        return decode(self._data)
 
     @property
     def height(self):

@@ -39,7 +39,7 @@ def print_height(bc):
 
 if __name__ == '__main__':
     parser = new_parser()
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
     try:
         f = open("../blocks/blockchain.pkl", "rb")
         bc = pickle.load(f)
@@ -48,12 +48,12 @@ if __name__ == '__main__':
     except:
         bc = Blockchain(12)
 
-    if hasattr(args, 'print'):
+    if args.get('print') is True:
         print_chain(bc)
-    if hasattr(args, 'print_height'):
+    if args.get('print_height') is True:
         print_height(bc)
-    if hasattr(args, 'add_data'):
-        add_block(bc, args.add_data)
+    if args.get('add_data') is not None:
+        add_block(bc, args.get('add_data'))
 
     f = open("../blocks/blockchain.pkl", "wb+")
     pickle.dump(bc, f)
