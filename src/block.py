@@ -11,12 +11,19 @@ class Block(object):
         self._bits = bits
         self._nonce = None
         self._hash = None
+        self._tx_list = transaction_list
 
     def pow_of_block(self):
         pw = Pow(self)
         self._nonce, self._hash = pw.mine()
         self._hash = encode(self._hash)
         return self
+    def hash_transactions(self):
+        tx_hashes = []
+
+        for tx in self._tx_list:
+            tx_hashes.append(tx.ID)
+        return sum256(encode(''.join(tx_hashes)))
 
     @property
     def hash(self):
@@ -42,3 +49,8 @@ class Block(object):
     @property
     def height(self):
         return str(self._height)
+
+    @property
+    def transactions(self):
+        return self._tx_list
+    

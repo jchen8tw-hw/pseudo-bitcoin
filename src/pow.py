@@ -10,7 +10,7 @@ class Pow(object):
     def _init_data(self, nonce):
         block = self._block
         self.data_ls = [block.prev_block_hash,
-                        block.data,
+                        block.hash_transactions(),
                         block.timestamp,
                         str(self._target),
                         str(nonce)]
@@ -23,13 +23,13 @@ class Pow(object):
 
     def mine(self):
         nonce = 0
-        print("Mining the block containing \'%s\'" % (self._block.data))
+        #print("Mining the block containing \'%s\'" % (self._block.data))
         while True:
             data = self._init_data(nonce)
             hash_str = sum256(data)
-            #sys.stdout.write("%s \r" % (hash_str))           
+            #sys.stdout.write("%s \r" % (hash_str))
             hash_int = int(hash_str, 16)
-            #sys.stdout.write("%d \r" %(hash_int))            
+            #sys.stdout.write("%d \r" %(hash_int))
             if hash_int < self._target:
                 break
             else:

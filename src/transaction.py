@@ -1,6 +1,7 @@
 from utils import *
 import pickle
 from abc import abstractclassmethod
+import sys
 
 
 class TxInput(object):
@@ -19,7 +20,7 @@ class TxInput(object):
 
     @property
     def tx_id(self):
-        return self._tx_id
+        return decode(self._tx_id)
 
     @property
     def vout(self):
@@ -28,7 +29,7 @@ class TxInput(object):
 
 class TxOutput(object):
 
-    reward = 10
+    reward = 1000
 
     def __init__(self, value, pubkey):
         self._value = value
@@ -77,6 +78,7 @@ class CoinbaseTx(Transaction):
     def __init__(self, to, data=None):
         if not data:
             data = 'Reward to {0}'.format(to)
+        print("Reward to:{0}".format(to))
 
         self._id = None
         self._vin = [TxInput('', -1, data)]
@@ -85,9 +87,37 @@ class CoinbaseTx(Transaction):
     def __repr__(self):
         return 'CoinbaseTx(id={0!r}, vin={1!r}, vout={2!r})'.format(
             self._id, self._vin, self._vout)
-    
+
     def tx_type(self):
         return u'Coinbase'
 
+
 class UTXOTx(Transaction):
-    def __init__(self,from_addr,to_addr,amount,bc)
+    def __init__(self, from_addr, to_addr, amount, bc):
+        inputs = []
+        outputs = []
+
+        acc, valid_outputs = bc.find_spendable_outputs(from_addr, amount)
+        if acc < amount:
+            print('Not enough funds')
+            sys.exit()
+
+        for tx_id, outs in valid_outputs.items():
+            for out in outs:
+                input = TxInput(tx_id, out, from_addr)
+                inputs.append(input)
+
+        outputs.append(TxOutput(amount, to_addr))
+        if acc > amount:
+            outputs.append(TxOutput(acc-amount, from_addr))
+
+        self._id = None
+        self._vin = inputs
+        self._vout = outputs
+
+    def __repr__(self):
+        return 'UTXOTx(id={0!r}, vin={1!r}, vout={2!r})'.format(
+            self._id, self._vin, self._vout)
+
+    def tx_type(self):
+        return u'UTXO'
