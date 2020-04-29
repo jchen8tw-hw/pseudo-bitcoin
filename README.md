@@ -13,7 +13,7 @@
 - [x] CLI
 
 ## Usage
-```python
+```shell
 #help
 python cli.py --help
 #create genesis block
